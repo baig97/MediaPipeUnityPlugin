@@ -243,10 +243,10 @@ jobs:
           rm Unity_*.alf
           rm Unity_*.ulf
 
-      - name: Download the base package
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ inputs.packageName }}-base
+      # - name: Download the base package
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: ${{ inputs.packageName }}-base
       - name: Download mediapipe_android.aar
         uses: actions/download-artifact@v3
         with:
