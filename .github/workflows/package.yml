@@ -17,7 +17,7 @@ on:
       androidBuildArgs:
         type: string
         default: '--android arm64 --android_ndk_api_level 21'
-      macosBuildArgs:
+      # macosBuildArgs:
         # type: string
         # default: '--desktop cpu --opencv cmake --macos_universal'
       iosBuildArgs:
