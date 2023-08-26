@@ -24,7 +24,7 @@ on:
     - cron: 0 12 * * 0,3
 jobs:
   package:
-    uses: ./.github/workflows/package.yml
+    uses: ./.github/workflows/package-2.yml
     with:
       ref: ${{ github.event.ref }}
       packageName: package
