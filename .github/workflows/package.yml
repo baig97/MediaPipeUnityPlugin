@@ -11,21 +11,21 @@ on:
       bazelBuildArgs:
         type: string
         default: '--experimental_scale_timeouts=10.0 --http_timeout_scaling=10.0'
-      linuxBuildArgs:
-        type: string
-        default: '--desktop gpu --opencv cmake'
+      # linuxBuildArgs:
+      #   type: string
+      #   default: '--desktop gpu --opencv cmake'
       androidBuildArgs:
         type: string
-        default: '--android fat --android_ndk_api_level 21'
+        default: '--android arm64 --android_ndk_api_level 21'
       macosBuildArgs:
-        type: string
-        default: '--desktop cpu --opencv cmake --macos_universal'
+        # type: string
+        # default: '--desktop cpu --opencv cmake --macos_universal'
       iosBuildArgs:
         type: string
         default: '--ios arm64'
-      windowsBuildArgs:
-        type: string
-        default: '--desktop cpu --opencv cmake'
+      # windowsBuildArgs:
+      #   type: string
+      #   default: '--desktop cpu --opencv cmake'
     secrets:
       UNITY_EMAIL:
         required: false
@@ -42,36 +42,36 @@ jobs:
         run: |
           echo 'inputs.ref=${{ inputs.ref }}'
           echo 'inputs.bazelBuildArgs=${{ inputs.bazelBuildArgs }}'
-          echo 'inputs.linuxBuildArgs=${{ inputs.linuxBuildArgs }}'
+          # echo 'inputs.linuxBuildArgs=${{ inputs.linuxBuildArgs }}'
           echo 'inputs.androidBuildArgs=${{ inputs.androidBuildArgs }}'
-          echo 'inputs.macosBuildArgs=${{ inputs.macosBuildArgs }}'
+          # echo 'inputs.macosBuildArgs=${{ inputs.macosBuildArgs }}'
           echo 'inputs.iosBuildArgs=${{ inputs.iosBuildArgs }}'
-          echo 'inputs.windowsBuildArgs=${{ inputs.windowsBuildArgs }}'
+          # echo 'inputs.windowsBuildArgs=${{ inputs.windowsBuildArgs }}'
 
-  linux-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ inputs.ref }}
+  # linux-build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ inputs.ref }}
 
-      - name: Build a Docker image
-        run: |
-          docker build --no-cache --build-arg UID=$(id -u) -t mediapipe_unity:latest . -f docker/linux/x86_64/Dockerfile
+  #     - name: Build a Docker image
+  #       run: |
+  #         docker build --no-cache --build-arg UID=$(id -u) -t mediapipe_unity:latest . -f docker/linux/x86_64/Dockerfile
 
-      - name: Build
-        run: |
-          docker run --rm \
-            --mount type=bind,src=$PWD/Packages,dst=/home/mediapipe/Packages \
-            --mount type=bind,src=$PWD/Assets,dst=/home/mediapipe/Assets \
-            mediapipe_unity:latest \
-            python build.py build --bazel_build_opts="${{ inputs.bazelBuildArgs }}" ${{ inputs.linuxBuildArgs }} -vv
+  #     - name: Build
+  #       run: |
+  #         docker run --rm \
+  #           --mount type=bind,src=$PWD/Packages,dst=/home/mediapipe/Packages \
+  #           --mount type=bind,src=$PWD/Assets,dst=/home/mediapipe/Assets \
+  #           mediapipe_unity:latest \
+  #           python build.py build --bazel_build_opts="${{ inputs.bazelBuildArgs }}" ${{ inputs.linuxBuildArgs }} -vv
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ inputs.packageName }}-base
-          path: .
+  #     - name: Upload artifacts
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: ${{ inputs.packageName }}-base
+  #         path: .
 
   android-build:
     runs-on: ubuntu-latest
@@ -102,30 +102,30 @@ jobs:
           name: ${{ inputs.packageName }}-mediapipe_android.aar
           path: Packages/com.github.homuler.mediapipe/Runtime/Plugins/Android/mediapipe_android.aar
 
-  macos-build:
-    runs-on: macos-12
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ inputs.ref }}
+  # macos-build:
+  #   runs-on: macos-12
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ inputs.ref }}
 
-      # Setup Python
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-      - name: Install NumPy
-        run: pip install --no-cache-dir --user numpy
+  #     # Setup Python
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.10'
+  #     - name: Install NumPy
+  #       run: pip install --no-cache-dir --user numpy
 
-      - name: Build libmediapipe_c.dylib
-        run: |
-          unset ANDROID_NDK_HOME
-          python build.py build --bazel_build_opts="${{ inputs.bazelBuildArgs }}" ${{ inputs.macosBuildArgs }} -vv
+  #     - name: Build libmediapipe_c.dylib
+  #       run: |
+  #         unset ANDROID_NDK_HOME
+  #         python build.py build --bazel_build_opts="${{ inputs.bazelBuildArgs }}" ${{ inputs.macosBuildArgs }} -vv
 
-      - name: Upload libmediapipe_c.dylib
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ inputs.packageName }}-libmediapipe_c.dylib
-          path: Packages/com.github.homuler.mediapipe/Runtime/Plugins/libmediapipe_c.dylib
+  #     - name: Upload libmediapipe_c.dylib
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: ${{ inputs.packageName }}-libmediapipe_c.dylib
+  #         path: Packages/com.github.homuler.mediapipe/Runtime/Plugins/libmediapipe_c.dylib
 
   ios-build:
     runs-on: macos-12
@@ -164,42 +164,42 @@ jobs:
           name: ${{ inputs.packageName }}-MediaPipeUnity.framework
           path: Packages/com.github.homuler.mediapipe/Runtime/Plugins/iOS/MediaPipeUnity.framework
 
-  windows-build:
-    runs-on: windows-2019
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ inputs.ref }}
+  # windows-build:
+  #   runs-on: windows-2019
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ inputs.ref }}
 
-      - name: Build a Docker image
-        run: |
-          docker build --no-cache -t mediapipe_unity:latest . -f docker/windows/x86_64/Dockerfile
-        shell: cmd
-        timeout-minutes: 60
+  #     - name: Build a Docker image
+  #       run: |
+  #         docker build --no-cache -t mediapipe_unity:latest . -f docker/windows/x86_64/Dockerfile
+  #       shell: cmd
+  #       timeout-minutes: 60
 
-      - name: Build
-        run: |
-          docker run --rm --cpus=2 --memory=8g ^
-            --mount type=bind,src=%CD%\Packages,dst=C:\mediapipe\Packages ^
-            --mount type=bind,src=%CD%\Assets,dst=C:\mediapipe\Assets ^
-            mediapipe_unity:latest ^
-            python build.py build --bazel_build_opts="${{ inputs.bazelBuildArgs }}" ${{ inputs.windowsBuildArgs }} -vv
-        shell: cmd
+  #     - name: Build
+  #       run: |
+  #         docker run --rm --cpus=2 --memory=8g ^
+  #           --mount type=bind,src=%CD%\Packages,dst=C:\mediapipe\Packages ^
+  #           --mount type=bind,src=%CD%\Assets,dst=C:\mediapipe\Assets ^
+  #           mediapipe_unity:latest ^
+  #           python build.py build --bazel_build_opts="${{ inputs.bazelBuildArgs }}" ${{ inputs.windowsBuildArgs }} -vv
+  #       shell: cmd
 
-      - name: Upload mediapipe_c.dll
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ inputs.packageName }}-mediapipe_c.dll
-          path: Packages/com.github.homuler.mediapipe/Runtime/Plugins/mediapipe_c.dll
+  #     - name: Upload mediapipe_c.dll
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: ${{ inputs.packageName }}-mediapipe_c.dll
+  #         path: Packages/com.github.homuler.mediapipe/Runtime/Plugins/mediapipe_c.dll
 
   package:
     runs-on: ubuntu-latest
     needs:
-      - linux-build
+      # - linux-build
       - android-build
-      - macos-build
+      # - macos-build
       - ios-build
-      - windows-build
+      # - windows-build
     steps:
       - name: Check options
         run: |
@@ -252,21 +252,21 @@ jobs:
         with:
           name: ${{ inputs.packageName }}-mediapipe_android.aar
           path: Packages/com.github.homuler.mediapipe/Runtime/Plugins/Android
-      - name: Download libmediapipe_c.dylib
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ inputs.packageName }}-libmediapipe_c.dylib
-          path: Packages/com.github.homuler.mediapipe/Runtime/Plugins
+      # - name: Download libmediapipe_c.dylib
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: ${{ inputs.packageName }}-libmediapipe_c.dylib
+      #     path: Packages/com.github.homuler.mediapipe/Runtime/Plugins
       - name: Download MediaPipeUnity.framework
         uses: actions/download-artifact@v3
         with:
           name: ${{ inputs.packageName }}-MediaPipeUnity.framework
           path: Packages/com.github.homuler.mediapipe/Runtime/Plugins/iOS/MediaPipeUnity.framework
-      - name: Download mediapipe_c.dll
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ inputs.packageName }}-mediapipe_c.dll
-          path: Packages/com.github.homuler.mediapipe/Runtime/Plugins
+      # - name: Download mediapipe_c.dll
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: ${{ inputs.packageName }}-mediapipe_c.dll
+      #     path: Packages/com.github.homuler.mediapipe/Runtime/Plugins
 
       - name: Zip all
         run: |
@@ -308,17 +308,17 @@ jobs:
           name: ${{ inputs.packageName }}-mediapipe_android.aar
           failOnError: false
 
-      - uses: geekyeggo/delete-artifact@v2
-        with:
-          name: ${{ inputs.packageName }}-libmediapipe_c.dylib
-          failOnError: false
+      # - uses: geekyeggo/delete-artifact@v2
+      #   with:
+      #     name: ${{ inputs.packageName }}-libmediapipe_c.dylib
+      #     failOnError: false
 
       - uses: geekyeggo/delete-artifact@v2
         with:
           name: ${{ inputs.packageName }}-MediaPipeUnity.framework
           failOnError: false
 
-      - uses: geekyeggo/delete-artifact@v2
-        with:
-          name: ${{ inputs.packageName }}-mediapipe_c.dll
-          failOnError: false
+      # - uses: geekyeggo/delete-artifact@v2
+      #   with:
+      #     name: ${{ inputs.packageName }}-mediapipe_c.dll
+      #     failOnError: false
